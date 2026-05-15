@@ -6,6 +6,8 @@ from pathlib import Path
 import pandas as pd
 from loguru import logger
 
+from .load import load_jsonl
+
 # Import des fonctions de nettoyage
 from .clean import (
     drop_duplicates,
@@ -115,7 +117,7 @@ def save_to_sql(df: pd.DataFrame, version: str):
         
         values = [
             (
-                d.get('input_text'), 
+                d.get('input'), 
                 d.get('input_raw'), 
                 d.get('categorie'),
                 d.get('priorite'), 
@@ -142,7 +144,7 @@ def run_full_pipeline():
 
     # 1. CHARGEMENT & NETTOYAGE
     logger.info("--- Étape 1 : Nettoyage ---")
-    df = pd.read_json(RAW_DATA, lines=True)
+    df = load_jsonl(RAW_DATA)
     df = handle_missing(df)
     df = normalise_text(df)
     df = drop_invalid_rows(df)
